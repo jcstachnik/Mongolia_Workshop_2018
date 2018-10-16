@@ -1,0 +1,47 @@
+
+import glob
+from hypoddpy import HypoDDRelocator
+
+from obspy import read_events
+
+gsefile = "/home/hypodd/Datasets/Newdepths/Test-gse-depth/hyp-deren.out"
+
+cat = read_events(gsefile)
+
+cat.plot(projection='local')
+
+relocator = HypoDDRelocator(working_dir="Deren_relocator_working_dir",
+    cc_time_before=0.20,
+    cc_time_after=0.8,
+    cc_maxlag=0.3,
+    cc_filter_min_freq=1.0,
+    cc_filter_max_freq=10.0,
+    cc_p_phase_weighting={"Z": 1.0},
+    cc_s_phase_weighting={"Z": 1.0, "E": 1.0, "N": 1.0},
+    cc_min_allowed_cross_corr_coeff=0.6)
+
+# There is no dataless seed for the DR stations, so create
+# the appropriate structure from the text file instead.
+fnam = "/home/hypodd/Datasets/WEEK_1/2_STA_FILES/txt/STA_DEREN_GSE.LST"
+file = open(fnam, 'r')
+stations_dict = {}
+for line in file:
+    st = line.split()[0]
+    la = float(line.split()[1])
+    lo = float(line.split()[2])
+    el = float(line.split()[3])
+    k = 'NA.'+st
+    stations_dict[k] = {'latitude': la, 'longitude': lo, 'elevation': el}
+
+relocator.stations = stations_dict
+
+relocator._write_station_input_file()
+
+relocator.add_event_files(glob.glob(gsefile))
+relocator._read_event_information()
+
+relocator._write_ph2dt_inp_file()
+
+relocator._create_event_id_map()
+relocator._write_catalog_input_file()
+
