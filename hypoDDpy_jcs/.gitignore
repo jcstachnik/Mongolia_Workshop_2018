@@ -1,0 +1,3 @@
+*.egg-info
+hypoddpy/src/*
+hypoddpy/*.pyc
