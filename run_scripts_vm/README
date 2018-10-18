@@ -1,0 +1,20 @@
+copy XL_dataless_noHD20AHD47A to /home/hypodd/Datasets/WEEK_1/3_RESPONSE/DATALESS
+
+After cross correlation, make the corrections to the dt.cc file using the 
+awk line: 
+
+These lines can be put in a Python terminal or run as a script.  
+The cross correlations can take hours to run, depending on the 
+size of the project.  I like to run them using a command like 
+this:
+
+nohup time python ./run_deren.py >& deren.log &
+
+The 'nohup' command allows the command to continue running 
+even if the terminal window is closed.
+The 'time' command just keeps track of how long it takes
+for a command to run. 
+
+Then the output is redirected into a log file called deren.log.
+
+Bon chance.
